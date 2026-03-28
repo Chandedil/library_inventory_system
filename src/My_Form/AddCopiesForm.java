@@ -94,7 +94,29 @@ public class AddCopiesForm extends javax.swing.JFrame {
       loadCopies();
      }
    
-
+     private String getStatus(int copyid){
+         String status = "";
+         
+         try{
+             Connection con = DB_connect.getConnection();
+             String sql = "SELECT status FROM book_copy WHERE copy_id = ? AND status = 'borrowed' ";       
+             PreparedStatement pst = con.prepareStatement(sql);
+             
+             pst.setInt(1, copyid);
+             
+             ResultSet rs = pst.executeQuery();
+             
+             while(rs.next()){
+                 status = rs.getString("status");
+             }
+             
+         }catch(Exception err){
+             
+         }
+         
+         return status;
+         
+     }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -340,9 +362,17 @@ public class AddCopiesForm extends javax.swing.JFrame {
     }//GEN-LAST:event_btnUpdateActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-        // TODO add your handling code here:
+        // TODO add your handling code here
+        
+        String copyStatus = getStatus(copyid);
+        
+        
         if(JOptionPane.showConfirmDialog(null,"Are you sure you want to delete this book? ", "Confirm Delete?", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION){
-            
+        
+        if(copyStatus.equalsIgnoreCase("borrowed")){
+           JOptionPane.showMessageDialog(null, "This book copy is borrowed can't be deleted");
+            return;
+        }
             try{
                 
                 Connection cn = DB_connect.getConnection();

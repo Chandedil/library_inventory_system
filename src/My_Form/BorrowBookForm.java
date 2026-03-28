@@ -34,14 +34,13 @@ public class BorrowBookForm extends javax.swing.JFrame {
         
         borrowerName(borrowerId, cmbName);
         loodBooks(cmbBook);
-        cmbBook.addItemListener(new java.awt.event.ItemListener() {
-       public void itemStateChanged(java.awt.event.ItemEvent evt) {
-        if (evt.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
+       
+        cmbBook.addActionListener(e -> {
             loadAcquisitionNumber(cmbAcquisitionNumber);
-            }
-           }
+            
         });
         
+        loadAcquisitionNumber(cmbAcquisitionNumber);
         populateTable();
         
         rentalDate.setDate( new java.util.Date());
@@ -176,7 +175,13 @@ public class BorrowBookForm extends javax.swing.JFrame {
        
         try{
             Connection con = DB_connect.getConnection();
-            String sql = "SELECT title FROM book";
+            String sql = "SELECT DISTINCT b.title " +
+                     "FROM book b " +
+                     "WHERE EXISTS (" +
+                     "   SELECT 1 FROM book_copy bc " +
+                     "   WHERE bc.book_id = b.book_id " +
+                     "   AND LOWER(TRIM(bc.status)) = 'available'" +
+                     ")";
             PreparedStatement pst = con.prepareStatement(sql);
             
             ResultSet rs = pst.executeQuery();
@@ -187,6 +192,10 @@ public class BorrowBookForm extends javax.swing.JFrame {
                 
                 String title = rs.getString("title");
                 cmbBook.addItem(title);
+            }
+            // ✅ ADD THIS
+            if (cmbBook.getItemCount() > 0) {
+                cmbBook.setSelectedIndex(0);
             }
             
         }catch(Exception error){
@@ -243,32 +252,42 @@ public class BorrowBookForm extends javax.swing.JFrame {
         
     // generator for acquisition number;
     
-    public void loadAcquisitionNumber(JComboBox<String> cmbAcquisitionNumber){
-        
-        String bookTitle = cmbBook.getSelectedItem().toString();
-        
-        int id = getBookId(bookTitle);
-        try{
-            
-           Connection con = DB_connect.getConnection();
-           String sql = "SELECT acquisition_number FROM book_copy WHERE book_id = ?";
-           PreparedStatement pst = con.prepareStatement(sql);
-           
-           pst.setInt(1,id);
-           
-           ResultSet rs = pst.executeQuery();
-           
-           cmbAcquisitionNumber.removeAllItems();
-           while(rs.next()){
-               String number = rs.getNString("acquisition_number");
-               cmbAcquisitionNumber.addItem(number);
-           }
-            
-            
-        }catch(Exception error){
-            JOptionPane.showMessageDialog(null, error);
+   public void loadAcquisitionNumber(JComboBox<String> cmbAcquisitionNumber){
+
+    if (cmbBook.getSelectedItem() == null) return; // ✅ prevent crash
+
+    String bookTitle = cmbBook.getSelectedItem().toString();
+    int id = getBookId(bookTitle);
+
+    if (id == 0) return; // ✅ prevent empty query
+
+    try{
+        Connection con = DB_connect.getConnection();
+
+        String sql = "SELECT acquisition_number FROM book_copy " +
+                     "WHERE book_id = ? " +
+                     "AND LOWER(TRIM(status)) = 'available'";
+
+        PreparedStatement pst = con.prepareStatement(sql);
+        pst.setInt(1,id);
+
+        ResultSet rs = pst.executeQuery();
+
+        cmbAcquisitionNumber.removeAllItems();
+
+        while(rs.next()){
+            cmbAcquisitionNumber.addItem(rs.getString("acquisition_number"));
         }
+
+        // ✅ Optional: auto-select first item
+        if (cmbAcquisitionNumber.getItemCount() > 0) {
+            cmbAcquisitionNumber.setSelectedIndex(0);
+        }
+
+    }catch(Exception error){
+        JOptionPane.showMessageDialog(null, error);
     }
+}
     
     //copyid getter:
     

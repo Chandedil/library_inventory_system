@@ -859,7 +859,7 @@ public class BookForm extends javax.swing.JFrame {
          txtPublished.setText(safeValue(model, row, 9));
          txtRemarks.setText(safeValue(model, row, 10));
          txtIsbn.setText(safeValue(model, row, 11));
-         
+         txtShelfLoc.setText(safeValue(model, row, 12));
           btnAdd.setEnabled(false);
           btnUpdate.setEnabled(true);
           btnDelete.setEnabled(true);
@@ -900,7 +900,7 @@ public class BookForm extends javax.swing.JFrame {
             tblModel.setRowCount(0);
            while(res.next()){
                
-               Vector<Object> row = new Vector<>();
+            Vector<Object> row = new Vector<>();
 
               row.add(res.getInt("book_id"));
             row.add(res.getString("class"));
