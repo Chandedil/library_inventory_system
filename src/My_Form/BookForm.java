@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Date;
 import java.util.Vector;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
@@ -36,7 +37,8 @@ public class BookForm extends javax.swing.JFrame {
         this.setExtendedState(BookForm.MAXIMIZED_BOTH);
         populateTable();
         loadCategories(cmbCategory);
-        
+        yearPublished.setYear(java.time.Year.now().getValue());
+        yearPublished.setMaximum(java.time.Year.now().getValue());
     }
     private void populateTable(){
         int colCount;
@@ -122,7 +124,7 @@ public class BookForm extends javax.swing.JFrame {
       cmbCategory.setEnabled(true);
       txtAuthor.setEnabled(true);
       txtPublisher.setEnabled(true);
-      txtPublished.setEnabled(true);
+      yearPublished.setEnabled(true);
       txtClass.setEnabled(true);
       txtIsbn.setEnabled(true);
       txtRemarks.setEnabled(true);
@@ -134,7 +136,7 @@ public class BookForm extends javax.swing.JFrame {
      private void setDefault(){
          txtTitle.setText("");
          txtAuthor.setText("");
-         txtPublished.setText("");
+         yearPublished.setYear(java.time.Year.now().getValue());
          txtPublisher.setText("");
           txtClass.setText("");
          txtCostPrice.setText("");
@@ -146,7 +148,7 @@ public class BookForm extends javax.swing.JFrame {
       cmbCategory.setEnabled(false);
       txtAuthor.setEnabled(false);
       txtPublisher.setEnabled(false);
-      txtPublished.setEnabled(false);
+      yearPublished.setEnabled(false);
       txtClass.setEnabled(false);
       txtIsbn.setEnabled(false);
       txtRemarks.setEnabled(false);
@@ -232,7 +234,6 @@ public class BookForm extends javax.swing.JFrame {
         txtPublisher = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        txtPublished = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
         txtPages = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
@@ -249,6 +250,7 @@ public class BookForm extends javax.swing.JFrame {
         jLabel12 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
         txtShelfLoc = new javax.swing.JTextField();
+        yearPublished = new com.toedter.calendar.JYearChooser();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -473,8 +475,6 @@ public class BookForm extends javax.swing.JFrame {
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel4.setText("Year Published:");
 
-        txtPublished.setEnabled(false);
-
         jLabel6.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
         jLabel6.setText("Pages:");
 
@@ -532,6 +532,8 @@ public class BookForm extends javax.swing.JFrame {
 
         txtShelfLoc.setEnabled(false);
 
+        yearPublished.setEnabled(false);
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -559,9 +561,9 @@ public class BookForm extends javax.swing.JFrame {
                                             .addComponent(txtAuthor, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addGap(33, 33, 33)
                                             .addComponent(jLabel4)
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                            .addComponent(txtPublished, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addGap(18, 18, 18))
+                                            .addGap(18, 18, 18)
+                                            .addComponent(yearPublished, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addGap(57, 57, 57))
                                         .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel4Layout.createSequentialGroup()
                                             .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                                 .addGroup(jPanel4Layout.createSequentialGroup()
@@ -605,48 +607,54 @@ public class BookForm extends javax.swing.JFrame {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(16, 16, 16)
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txtTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addGap(28, 28, 28)
+                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel2)
+                                    .addComponent(cmbCategory)))
+                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addGap(26, 26, 26)
+                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel5)
+                                    .addComponent(txtAuthor, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel4))
+                                .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(22, 22, 22)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jLabel3)
+                                .addComponent(txtPublisher, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel6)
+                                .addComponent(txtClass, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtPages, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel8)
+                            .addComponent(txtCostPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel9)
+                            .addComponent(txtRemarks, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel10)
+                            .addComponent(txtIsbn, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(26, 26, 26)
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel5)
-                            .addComponent(txtAuthor, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel4)
-                            .addComponent(txtPublished, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jLabel11)
+                            .addComponent(txtSourceOfFunds, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel13)
+                            .addComponent(txtShelfLoc, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(9, 9, 9)
+                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 406, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGap(28, 28, 28)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(cmbCategory))))
-                .addGap(22, 22, 22)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel3)
-                        .addComponent(txtPublisher, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel6)
-                        .addComponent(txtClass, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(txtPages, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel8)
-                    .addComponent(txtCostPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel9)
-                    .addComponent(txtRemarks, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel10)
-                    .addComponent(txtIsbn, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(26, 26, 26)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel11)
-                    .addComponent(txtSourceOfFunds, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel13)
-                    .addComponent(txtShelfLoc, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(9, 9, 9)
-                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 406, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(84, 84, 84)
+                        .addComponent(yearPublished, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -694,7 +702,6 @@ public class BookForm extends javax.swing.JFrame {
     PreparedStatement pst;
 
     // --- Validate Year Published ---
-    String yearInput = txtPublished.getText().trim();
    
 
     if (check.equalsIgnoreCase("Add")) {
@@ -706,11 +713,13 @@ public class BookForm extends javax.swing.JFrame {
     int categoryId = getCategoryIdByName(categoryName);
     String priceText = txtCostPrice.getText().replace(",","").trim();
     
+    int year = yearPublished.getYear();
+       
     pst.setString(1, txtTitle.getText());
     pst.setString(2, txtAuthor.getText());
     pst.setInt(3, categoryId);
     pst.setString(4, txtPublisher.getText());
-    pst.setString(5, txtPublished.getText());
+    pst.setInt(5, year);
     pst.setString(6, txtIsbn.getText());
     pst.setString(7, txtShelfLoc.getText());
     pst.setString(8, txtRemarks.getText());
@@ -728,12 +737,12 @@ public class BookForm extends javax.swing.JFrame {
 
          String categoryName = cmbCategory.getSelectedItem().toString();
     int categoryId = getCategoryIdByName(categoryName);
-
+    int year = yearPublished.getYear();
     pst.setString(1, txtTitle.getText());
     pst.setString(2, txtAuthor.getText());
     pst.setInt(3, categoryId);
     pst.setString(4, txtPublisher.getText());
-    pst.setString(5, txtPublished.getText());
+    pst.setInt(5, year );
     pst.setString(6, txtIsbn.getText());
     pst.setString(7, txtShelfLoc.getText());
     pst.setString(8, txtRemarks.getText());
@@ -856,7 +865,7 @@ public class BookForm extends javax.swing.JFrame {
          txtSourceOfFunds.setText(safeValue(model, row, 6));
          txtCostPrice.setText(safeValue(model, row, 7));
          txtPublisher.setText(safeValue(model, row, 8));
-         txtPublished.setText(safeValue(model, row, 9));
+         yearPublished.setYear(Integer.parseInt(safeValue(model, row, 9)));
          txtRemarks.setText(safeValue(model, row, 10));
          txtIsbn.setText(safeValue(model, row, 11));
          txtShelfLoc.setText(safeValue(model, row, 12));
@@ -1015,11 +1024,11 @@ public class BookForm extends javax.swing.JFrame {
     private javax.swing.JTextField txtCostPrice;
     private javax.swing.JTextField txtIsbn;
     private javax.swing.JTextField txtPages;
-    private javax.swing.JTextField txtPublished;
     private javax.swing.JTextField txtPublisher;
     private javax.swing.JTextField txtRemarks;
     private javax.swing.JTextField txtShelfLoc;
     private javax.swing.JTextField txtSourceOfFunds;
     private javax.swing.JTextField txtTitle;
+    private com.toedter.calendar.JYearChooser yearPublished;
     // End of variables declaration//GEN-END:variables
 }
