@@ -165,6 +165,32 @@ public class BookForm extends javax.swing.JFrame {
       populateTable();
      }
      
+     private String getStatus( int bookId){
+         
+        String status = "";
+         
+         try{
+             Connection cn = DB_connect.getConnection();
+             String sql = "SELECT status FROM book_copy WHERE book_id = ? AND status = 'borrowed' ";
+             PreparedStatement ps = cn.prepareStatement(sql);
+             
+             ps.setInt(1,bookId);
+             
+             ResultSet rs = ps.executeQuery();
+             
+             while(rs.next()){
+                 status = rs.getString("status");
+             }
+             
+             
+             
+         }catch(Exception err){
+             
+         }
+         
+         return status;
+     }
+     
      private String safeValue(DefaultTableModel model, int row, int col){
          Object val = model.getValueAt(row, col);
          return(val == null) ? "" : val.toString();
@@ -733,8 +759,14 @@ public class BookForm extends javax.swing.JFrame {
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         // TODO add your handling code here:
+        
+        String bookStatus = getStatus(bookid);
         if(JOptionPane.showConfirmDialog(null,"Are you sure you want to delete this book? ", "Confirm Delete?", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION){
-            
+        
+        if(bookStatus.equalsIgnoreCase("borrowed")) {
+            JOptionPane.showMessageDialog(null, "This book has been borrowed can't be deleted.");
+            return;
+        }
             try{
                 
                 Connection cn = DB_connect.getConnection();
@@ -856,8 +888,8 @@ public class BookForm extends javax.swing.JFrame {
            Connection cn = DB_connect.getConnection();
            Statement st = cn.createStatement();
            String query =
-           "SELECT b.book_id, b.title, b.author, c.category_name, b.publisher, b.publication_year " +
-           "FROM book b LEFT JOIN category c ON b.category_id = c.category_id " +
+            "SELECT b.book_id, b.title, b.author, c.category_name, b.publisher, b.publication_year, b.isbn, b.shelf_location, b.remarks, b.class, b.pages, b.source_of_fund, b.cost_price " +
+            "FROM book b LEFT JOIN category c ON b.category_id = c.category_id " +
            "WHERE b.title LIKE '%" + title + "%'";
 
            ResultSet res = st.executeQuery(query);
@@ -868,17 +900,25 @@ public class BookForm extends javax.swing.JFrame {
             tblModel.setRowCount(0);
            while(res.next()){
                
-               Vector<Object> ColData = new Vector<>();
+               Vector<Object> row = new Vector<>();
 
-            ColData.add(res.getInt("book_id"));
-            ColData.add(res.getString("title"));
-            ColData.add(res.getString("author"));
-            ColData.add(res.getString("category_name"));
-            ColData.add(res.getString("publisher"));
-            ColData.add(res.getString("publication_year"));
+              row.add(res.getInt("book_id"));
+            row.add(res.getString("class"));
+            row.add(res.getString("title"));
+            row.add(res.getString("author"));
+            row.add(res.getString("category_name"));
+            row.add(res.getInt("pages"));
+            row.add(res.getString("source_of_fund"));
+            row.add(res.getString("cost_price"));
+            row.add(res.getString("publisher"));
+            row.add(res.getString("publication_year"));
+            row.add(res.getString("remarks"));
+            row.add(res.getString("isbn"));
+            row.add(res.getString("shelf_location"));
+            tblModel.addRow(row);
 
 
-            tblModel.addRow(ColData);
+          
             }
             
         } catch (SQLException ex) {
