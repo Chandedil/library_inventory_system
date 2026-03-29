@@ -117,7 +117,8 @@ public class BorrowerForm extends javax.swing.JFrame {
       txtPhoneNumber.setText("");
       cmbStatus.setSelectedIndex(0);
       cmbBorrowerType.setSelectedIndex(0);
-      
+      txtLastName.setText("");
+      txtIdNumber.setText("");
       
    }
    
@@ -165,6 +166,9 @@ public class BorrowerForm extends javax.swing.JFrame {
         
         return status;
     }
+   
+   
+  
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
